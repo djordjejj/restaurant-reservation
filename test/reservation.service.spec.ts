@@ -1,5 +1,6 @@
-import { ReservationService } from "src/reservation/reservation.service";
-import { RestaurantService } from "src/restaurant/restaurant.service";
+import { ReservationService } from 'src/reservation/reservation.service';
+import { RestaurantService } from 'src/restaurant/restaurant.service';
+import { Restaurant } from 'src/restaurant/restaurant.schema';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -7,19 +8,21 @@ describe('ReservationService', () => {
 
   beforeEach(() => {
     restaurantService = {
-      getRestaurant: jest.fn((id: string) => ({
-        _id: id,
-        name: 'Mock Restaurant',
-        openHour: '10:00',
-        closeHour: '22:00',
-      })),
+      getRestaurant: jest.fn().mockImplementation((id: string) => {
+        const r = new Restaurant();
+        r._id = id;
+        r.name = 'Test R';
+        r.openHour = '00:00';
+        r.closeHour = '23:59';
+        return r;
+      })
     } as any;
 
     service = new ReservationService(restaurantService);
   });
 
   it('should create a reservation', () => {
-    const date = new Date();
+    const date = new Date('2024-01-01T12:00:00Z'); 
     const reservation = service.createReservation('rest1', date, 'John');
 
     expect(reservation).toBeDefined();
@@ -28,12 +31,15 @@ describe('ReservationService', () => {
   });
 
   it('should return reservations for a restaurant', () => {
-    const date = new Date();
+    const date = new Date('2024-01-01T12:00:00Z');
+
     service.createReservation('rest123', date, 'John');
     service.createReservation('rest123', date, 'Jane');
 
-    const result = service.getReservationsByRestaurant('rest123');
+    const all = service.getReservationsByRestaurant('rest123');
 
-    expect(result).toHaveLength(2);
+    expect(all.map(r => r.guestName)).toContain('John');
+    expect(all.map(r => r.guestName)).toContain('Jane');
+    expect(all.length).toBe(2);
   });
 });
