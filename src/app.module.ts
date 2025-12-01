@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloDriver } from '@nestjs/apollo';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { ReservationModule } from './reservation/reservation.module';
-import { DateScalar } from './scalars/date.scalar';
 import { AuthModule } from './auth/auth.module';
-import { Request } from 'express';
+import { DateScalar } from './scalars/date.scalar';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: true,
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      context: ({ req }: { req: Request }) => ({ req }),
+      autoSchemaFile: true,
+      context: ({ req }: { req: any }) => ({ req }),
     }),
     AuthModule,
     RestaurantModule,
