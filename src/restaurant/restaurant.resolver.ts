@@ -27,7 +27,7 @@ export class RestaurantResolver {
 
   @ResolveField(() => Number)
   async reservationCount(@Parent() restaurant: Restaurant) {
-    const reservations = await this.reservationService.getReservationsByRestaurant(
+    const reservations = this.reservationService.getReservationsByRestaurant(
       restaurant._id,
     );
     return reservations.length;

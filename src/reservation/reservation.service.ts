@@ -10,9 +10,10 @@ export class ReservationService {
 
   createReservation(restaurantId: string, date: Date, guestName: string): Reservation {
     const restaurant = this.restaurantService.getRestaurant(restaurantId);
-    if (!restaurant) throw new BadRequestException('Restaurant not found');
+    if (!restaurant) {
+        throw new BadRequestException('Restaurant not found');
+    }
 
-    // Validate time range
     if (!this.isTimeWithinRange(date, restaurant.openHour, restaurant.closeHour)) {
       throw new BadRequestException('Reservation outside working hours');
     }
@@ -24,7 +25,6 @@ export class ReservationService {
       date,
     };
 
-    // ✅ Correct: append, do NOT overwrite
     this.reservations.push(reservation);
 
     return reservation;
